@@ -18,7 +18,7 @@ function postData(keyName,objData, callback){
 	xhr.setRequestHeader("Content-type", "application/json", "charset=utf-8");
 	xhr.onload= function(){
 		if(xhr.readyState==4 && xhr.status== 201){
-			console.log("success")
+			//console.log("success")
 			callback();
 		}
 	}
@@ -34,7 +34,7 @@ function deleteItem(id,callback){
 	xhr.open("DELETE","https://6037a910543504001772304e.mockapi.io/"+ keyName +"/"+ id);
 	xhr.onload = function(){
 		if(xhr.readyState==4 && xhr.status== 200){
-			console.log('success');
+			//console.log('success');
 			for(var i=0; i<$("contentTable").children.length; i++){
 				if($("contentTable").children[i].id==id){
 					$("contentTable").deleteRow(i);
@@ -82,7 +82,7 @@ function handleCheckDel(e){
 		}
 	}
 	sessionStorage.setItem("RowSelected", JSON.stringify(arrRowSelected));
-	console.log(arrRowSelected)
+	//console.log(arrRowSelected)
 }
 function showTable(data){
 	var str="";
@@ -108,13 +108,17 @@ function showTable(data){
 	$("contentTable").innerHTML=str2;
 }
 function responsive(wid){
-	if($("title").children[0].innerHTML=="Categories"){
-		if(wid.matches){
+	if(wid.matches){
+		if($("title").children[0].innerHTML=="Categories"){
 			process_1("none");
 		}
-		else{
+		document.getElementsByTagName("nav")[0].style.display="none";
+	}
+	else{
+		if($("title").children[0].innerHTML=="Categories"){
 			process_1("table-cell");
 		}
+		document.getElementsByTagName("nav")[0].style.display="block";
 	}
 	function process_1(val){
 		var table = $("content").children[0].children[0];
@@ -251,7 +255,7 @@ window.onload = function(){
 					xhr.setRequestHeader("Content-type", "application/json", "charset=utf-8");
 					xhr.onload = function(){
 						if(xhr.readyState==4 && xhr.status== 200){
-							console.log('success');
+							//console.log('success');
 						}
 					}
 					xhr.send(JSON.stringify(objData));
@@ -308,8 +312,9 @@ window.onload = function(){
 		nav.style.display=(nav.style.display=="none")? "block" : "none";
 	}
 	document.body.onclick=function(e){
-		if(e.target.id!=="menuRespon"){
-			document.getElementsByTagName("nav")[0].style.display="none"
+		var ulTag= document.getElementsByTagName("nav")[0].children[0];
+		if(e.target.id!=="menuRespon"&& e.target.parentElement != ulTag){
+			document.getElementsByTagName("nav")[0].style.display="none";
 		}
 		
 	}
