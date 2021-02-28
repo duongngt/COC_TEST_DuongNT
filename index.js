@@ -314,7 +314,8 @@ window.onload = function(){
 	document.body.onclick=function(e){
 		var ulTag= document.getElementsByTagName("nav")[0].children[0];
 		if(e.target.id!=="menuRespon"&& e.target.parentElement != ulTag){
-			document.getElementsByTagName("nav")[0].style.display="none";
+			responsive(widIphoneX);
+			//document.getElementsByTagName("nav")[0].style.display="none";
 		}
 		
 	}
