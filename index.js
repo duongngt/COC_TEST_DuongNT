@@ -65,7 +65,7 @@ function handleEdit(e){
 			}
 		}
 		sessionStorage.setItem("indexEdit", rowCurrent.rowIndex);
-		}
+	}
 }
 function handleCheckDel(e){
 	var arrRowSelected = sessionStorage.getItem("RowSelected");
@@ -77,6 +77,7 @@ function handleCheckDel(e){
 		for(var i=0; i<arrRowSelected.length; i++){
 			if(arrRowSelected[i] == e.parentElement.parentElement.id){
 				arrRowSelected.splice(i,1);
+				break;
 			}
 		}
 	}
@@ -127,6 +128,7 @@ function responsive(wid){
 }
 window.onload = function(){
 	sessionStorage.removeItem("RowSelected");
+	// add event for nav menu
 	var itemsNav = $("nav").children;
 	for(var i=0; i< itemsNav.length;i++){
 		itemsNav[i].addEventListener("click", function(){
@@ -148,6 +150,7 @@ window.onload = function(){
 							contentTable: res
 						}
 						showTable(objData);
+						responsive(window.matchMedia("(max-width: 600px)"));
 					});
 					break;
 				case "Categories":
@@ -168,20 +171,24 @@ window.onload = function(){
 				case "Users":
 					$("contentTable").innerHTML ="";
 					$("titleTable").innerHTML ="";
+					responsive(window.matchMedia("(max-width: 600px)"));
 					break;
 				case "Collectibles":
 					$("contentTable").innerHTML ="";
 					$("titleTable").innerHTML ="";
+					responsive(window.matchMedia("(max-width: 600px)"));
 					break;
 				default:
 					break;
 			}
 		})
 	}
+	//------------------------------------
 	// active tab config
 	$("nav").children[3].dispatchEvent(new Event("click"));
-	//
-	$("closeTable").addEventListener("click", function(){
+	//---------------------
+	// add event for closePopup
+	$("closePopup").addEventListener("click", function(){
 		$("popup").style.display="none";
 		var arrInp = $("popupContent").children[2].children;
 		for(var i=0; i<arrInp.length; i++){
@@ -192,9 +199,11 @@ window.onload = function(){
 		clearPopup();
 
 	});
+	//------------
 	$("bgPopup").onclick = function(){
-		$("closeTable").dispatchEvent(new Event("click"));
+		$("closePopup").dispatchEvent(new Event("click"));
 	}
+	// add event for btn add
 	$("addItem").addEventListener("click",function(){
 		var tagActive = this.parentElement.parentElement.children[0].innerHTML;
 		switch (tagActive){
@@ -218,8 +227,7 @@ window.onload = function(){
 					if(arrInp[i].children[1].name == "order"){
 						arrInp[i].children[1].onkeyup = function(){
 							var str = this.value;
-							str = str.match(/\d/gi);
-							
+							str = str.match(/\d/gi);							
 							this.value = (str==null)? "" : str.join("");
 						}
 					}
@@ -229,6 +237,8 @@ window.onload = function(){
 				break;
 		}
 	})
+	//---------------
+	//  add event for btn inside popup
 	$("btnAdd").onclick=function(){
 		var keyName = $("title").children[0].innerHTML;
 		var indexTab = sessionStorage.getItem("indexTabCurrent");
@@ -262,7 +272,7 @@ window.onload = function(){
 	for(var i=0; i<grBtMsg.length; i++){
 		grBtMsg[i].onclick = function(){
 			if(this.innerHTML=="Delete"){
-				var idEdit = sessionStorage.getItem("idDel");;
+				var idEdit = sessionStorage.getItem("idDel");
 				deleteItem(idEdit,function(){
 				})
 				$("msgComfirm").style.display = "none";
@@ -272,6 +282,8 @@ window.onload = function(){
 			}
 		}
 	}
+	//-------
+	// delete items selected
 	$("delAll").onclick = function(){
 		var arrRowSelected = sessionStorage.getItem("RowSelected");
 		if(arrRowSelected != null){
@@ -286,27 +298,39 @@ window.onload = function(){
 			}
 		}
 	}
+	//-------
 	// responsive
 	var widIphoneX = window.matchMedia("(max-width: 600px)")
 	responsive(widIphoneX);
 	widIphoneX.addListener(responsive);
+	$("menuRespon").onclick=function(){
+		var nav= document.getElementsByTagName("nav")[0];
+		nav.style.display=(nav.style.display=="none")? "block" : "none";
+	}
+	document.body.onclick=function(e){
+		if(e.target.id!=="menuRespon"){
+			document.getElementsByTagName("nav")[0].style.display="none"
+		}
+		
+	}
 }
+//--------------------------------------
  function clearPopup(){
  	var arrInp = $("popupContent").children[2].children;
-			for(var i=0; i<arrInp.length; i++){
-				arrInp[i].children[1].value = "";
-			}
+	for(var i=0; i<arrInp.length; i++){
+		arrInp[i].children[1].value = "";
 	}
+}
 function checkInp(){
  	var arrInp = $("popupContent").children[2].children;
  	var res = true
-		for(var i=0; i<arrInp.length; i++){
-		    if(arrInp[i].children[1].value ==""){
-		    	arrInp[i].children[1].style.background="#FFEFEF";
-		    	arrInp[i].children[1].style.border="1px solid #DBE2BF";
-		    	arrInp[i].children[2].style.visibility="visible";
-		    	res = false;
-		    }
-		}
-		return res;
+	for(var i=0; i<arrInp.length; i++){
+	    if(arrInp[i].children[1].value ==""){
+	    	arrInp[i].children[1].style.background="#FFEFEF";
+	    	arrInp[i].children[1].style.border="1px solid #DBE2BF";
+	    	arrInp[i].children[2].style.visibility="visible";
+	    	res = false;
+	    }
+	}
+	return res;
 }
