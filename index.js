@@ -42,6 +42,8 @@ function deleteItem(id,callback){
 			}
 			callback();
 		}
+		var rowLast = JSON.parse($("contentTable").children[$("contentTable").children.length-1].getAttribute("data-obj"));
+		sessionStorage.setItem("orderMax",rowLast.order);
 	}
 	xhr.send();
 }
@@ -56,16 +58,30 @@ function handleEdit(e){
 		$("Dname").value=objData.name;
 		$("Status").value = objData.status
 		$("Order").value= objData.order;
-
+		processInpPopup(objData);
+		sessionStorage.setItem("indexEdit", rowCurrent.rowIndex);
+	}
+}
+function processInpPopup(objData){
 		var arrInp = $("popupContent").children[2].children;
+		var objData = (objData==undefined)? {status: "Enable"} : objData;
+		objData.order = $("Order").value;
 		for(var i=0; i<arrInp.length; i++){
 			arrInp[i].children[1].onchange=function(){
+				this.style.background="#FFFFF";
+				this.style.border="1px solid #55642C";
+				this.parentElement.children[2].style.visibility="hidden";
 				objData[this.name] = this.value;
 				sessionStorage.setItem("objData", JSON.stringify(objData));
 			}
+			if(arrInp[i].children[1].name == "order"){
+				arrInp[i].children[1].onkeyup = function(){
+					var str = this.value;
+					str = str.match(/\d/gi);							
+					this.value = (str==null)? "" : str.join("");
+				}
+			}
 		}
-		sessionStorage.setItem("indexEdit", rowCurrent.rowIndex);
-	}
 }
 function handleCheckDel(e){
 	var arrRowSelected = sessionStorage.getItem("RowSelected");
@@ -162,6 +178,8 @@ window.onload = function(){
 						res.sort(function(a,b){
 							return (a.order>b.order)? 1 : (- 1) ;
 						});
+						var orderMax = res[res.length-1].order;
+						sessionStorage.setItem("orderMax",orderMax);
 						objData={
 							tagName:tagName,
 							titleTable: ["Key","Display Name","Show/Hide","Order","Edit","Delete","Bulk Delete"],
@@ -193,6 +211,7 @@ window.onload = function(){
 	//---------------------
 	// add event for closePopup
 	$("closePopup").addEventListener("click", function(){
+		$("popupContent").children[0].innerHTML="Add New Categories";
 		$("popup").style.display="none";
 		var arrInp = $("popupContent").children[2].children;
 		for(var i=0; i<arrInp.length; i++){
@@ -218,24 +237,9 @@ window.onload = function(){
 				$("popup").style.display="block";
 				$("btnAdd").innerHTML="Add";
 				$("Status").value = "Enable";
-				var arrInp = $("popupContent").children[2].children;
-				var objData = {status: "Enable"}
-				for(var i=0; i<arrInp.length; i++){
-					arrInp[i].children[1].onchange=function(){
-						this.style.background="#FFFFF";
-						this.style.border="1px solid #55642C";
-						this.parentElement.children[2].style.visibility="hidden";
-						objData[this.name] = this.value;
-						sessionStorage.setItem("objData", JSON.stringify(objData));
-					}
-					if(arrInp[i].children[1].name == "order"){
-						arrInp[i].children[1].onkeyup = function(){
-							var str = this.value;
-							str = str.match(/\d/gi);							
-							this.value = (str==null)? "" : str.join("");
-						}
-					}
-				}
+				var valOrderPrev = parseInt(sessionStorage.getItem("orderMax"))
+				$("Order").value = valOrderPrev + 1;
+				processInpPopup();
 				break;
 			default:
 				break;
@@ -255,7 +259,7 @@ window.onload = function(){
 					xhr.setRequestHeader("Content-type", "application/json", "charset=utf-8");
 					xhr.onload = function(){
 						if(xhr.readyState==4 && xhr.status== 200){
-							//console.log('success');
+							//console.log('success');							
 						}
 					}
 					xhr.send(JSON.stringify(objData));
@@ -315,7 +319,6 @@ window.onload = function(){
 		var ulTag= document.getElementsByTagName("nav")[0].children[0];
 		if(e.target.id!=="menuRespon"&& e.target.parentElement != ulTag){
 			responsive(widIphoneX);
-			//document.getElementsByTagName("nav")[0].style.display="none";
 		}
 		
 	}
