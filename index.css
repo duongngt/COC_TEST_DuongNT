@@ -7,7 +7,8 @@ body {
   font-family: Helvetica;
   height: 768px;
   width: 1366px;
-  background: #F2F2F2; }
+  background: #F2F2F2;
+  margin: auto; }
   body header {
     width: 100%;
     height: 68px;
